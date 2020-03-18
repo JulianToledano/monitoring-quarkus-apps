@@ -140,7 +140,7 @@ With the configuration in the `application.properties` all logs are forwarded to
 
 # Further work
 
-1. Connect logstash to elk so all metrics can be accessed in the same place.
+1. Connect prometheus to elk so all metrics can be accessed in the same place.
     * [Metricbeat](https://www.elastic.co/beats/metricbeat)
     * [Analyze your Prometheus metrics at scale](https://www.elastic.co/what-is/prometheus-monitoring)
 2. Create alerts in Prometheus
