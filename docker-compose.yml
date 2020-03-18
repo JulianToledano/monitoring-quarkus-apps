@@ -1,0 +1,74 @@
+version: '3.2'
+services: 
+    prometheus:
+        image: prom/prometheus:latest
+        container_name: prometheus
+        ports:
+            - 9090:9090
+        networks:
+            - monitoring
+        command:
+            - --config.file=/etc/prometheus/prometheus.yml
+        volumes:
+            - ~/Documents/training/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+        depends_on:
+            - cadvisor
+    cadvisor:
+        image: google/cadvisor:latest
+        container_name: cadvisor
+        ports:
+            - 8888:8080
+        networks: 
+            - monitoring
+        volumes: 
+            - /:/rootfs:ro
+            - /var/run:/var/run:rw
+            - /sys:/sys:ro
+            - /var/lib/docker/:/var/lib/docker:ro
+    elasticsearch:
+        image: elasticsearch:7.6.1
+        container_name: elasticsearch
+        ports: 
+            - 9200:9200
+            - 9300:9300
+        networks: 
+            - monitoring
+        environment: 
+            - discovery.type=single-node
+    logstash:
+        image: docker.elastic.co/logstash/logstash:7.6.1
+        container_name: logstash
+        ports:
+            - 5000:5000
+            - 9600:9600
+            - 12201:12201/udp
+        networks: 
+            - monitoring
+        volumes: 
+            - ./logstash/pipelines:/usr/share/logstash/pipeline
+        depends_on: 
+            -  elasticsearch
+    kibana:
+        image: docker.elastic.co/kibana/kibana:7.6.1
+        container_name: kibana
+        ports: 
+            - 5601:5601
+        networks: 
+            - monitoring
+        depends_on: 
+            - logstash
+    postgres:
+        image: postgres:latest
+        container_name: postgres
+        ports: 
+            - 5432:5432
+        networks: 
+            - monitoring
+        environment: 
+            - POSTGRES_USER=sarah
+            - POSTGRES_PASSWORD=connor
+            - POSTGRES_DB=people
+
+networks: 
+    monitoring:
+        driver: bridge
