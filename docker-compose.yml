@@ -10,7 +10,7 @@ services:
         command:
             - --config.file=/etc/prometheus/prometheus.yml
         volumes:
-            - ~/Documents/training/monitoring/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+            - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
         depends_on:
             - cadvisor
     cadvisor:
